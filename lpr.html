@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LPR System — VTU ADA BCS401 Micro Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:    #0d0d0d;
+    --ink2:   #3a3a3a;
+    --ink3:   #6b6b6b;
+    --bg:     #f5f3ee;
+    --bg2:    #eceae3;
+    --bg3:    #e2dfd5;
+    --accent: #1a3a5c;
+    --accent2:#2e5f92;
+    --green:  #1a4731;
+    --green2: #2d6a4f;
+    --amber:  #7a4800;
+    --amber2: #b86800;
+    --red:    #6b1a1a;
+    --mono:   'Space Mono', monospace;
+    --sans:   'DM Sans', sans-serif;
+    --border: 1.5px solid #c8c4b8;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-weight: 400;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: #fff;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.04) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.04) 40px);
+  }
+  .cover-inner { position: relative; text-align: center; max-width: 820px; }
+  .cover-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 0.35em 1em;
+    border-radius: 2px;
+    margin-bottom: 2.5rem;
+    color: rgba(255,255,255,0.8);
+  }
+  .cover h1 {
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .cover h1 span { color: #7eb8e8; }
+  .cover-sub {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.7);
+    max-width: 540px;
+    margin: 0 auto 3rem;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .cover-meta-item {
+    padding: 1rem 1.25rem;
+    background: rgba(255,255,255,0.06);
+    text-align: left;
+  }
+  .cover-meta-item .label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 0.3rem;
+  }
+  .cover-meta-item .value {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #fff;
+  }
+  .cover-scroll {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: var(--border);
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav a {
+    display: block;
+    padding: 0.9rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  nav a:hover { color: var(--ink); border-bottom-color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  section { padding: 5rem 0 3rem; border-bottom: var(--border); }
+  section:last-child { border-bottom: none; }
+
+  /* ── TYPOGRAPHY ── */
+  .section-number {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 0.5rem;
+  }
+  h2 {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 2rem 0 0.75rem;
+    color: var(--ink);
+  }
+  p { margin-bottom: 1rem; color: var(--ink2); }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap {
+    background: #0d1117;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    border: 1px solid #21262d;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+  }
+  .code-lang {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8b949e;
+  }
+  .code-dots { display: flex; gap: 5px; }
+  .code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  pre {
+    padding: 1.25rem 1.25rem;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: #e6edf3;
+  }
+  .c-kw   { color: #ff7b72; }
+  .c-fn   { color: #d2a8ff; }
+  .c-str  { color: #a5d6ff; }
+  .c-cmt  { color: #8b949e; font-style: italic; }
+  .c-num  { color: #f0883e; }
+  .c-cls  { color: #ffa657; }
+
+  /* ── FLOWCHART ── */
+  .flowchart-wrap {
+    background: #fff;
+    border: var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+    overflow-x: auto;
+  }
+  .flowchart-wrap svg { min-width: 560px; }
+
+  /* ── CARDS ── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .card {
+    background: #fff;
+    border: var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+  .card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .card p { font-size: 0.84rem; margin: 0; color: var(--ink3); }
+  .card-blue .card-icon { background: #dbeafe; }
+  .card-green .card-icon { background: #dcfce7; }
+  .card-amber .card-icon { background: #fef9c3; }
+  .card-red .card-icon { background: #fee2e2; }
+  .card-purple .card-icon { background: #ede9fe; }
+  .card-teal .card-icon { background: #ccfbf1; }
+
+  /* ── ALGORITHM BOXES ── */
+  .algo-box {
+    border-left: 3px solid var(--accent2);
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border-radius: 0 6px 6px 0;
+    margin: 1.25rem 0;
+  }
+  .algo-box h4 {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .algo-box p { font-size: 0.875rem; margin: 0; color: var(--ink2); }
+  .algo-box .complexity {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    background: #eff6ff;
+    color: var(--accent2);
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+    border: 1px solid #bfdbfe;
+  }
+
+  /* ── COMPLEXITY TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.875rem; }
+  th {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: var(--bg2);
+    border-bottom: var(--border);
+    color: var(--ink2);
+  }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--bg3); color: var(--ink2); }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg2); }
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    padding: 0.2em 0.5em;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .tag-g { background: #dcfce7; color: #166534; }
+  .tag-y { background: #fef9c3; color: #713f12; }
+  .tag-b { background: #dbeafe; color: #1e3a5f; }
+  .tag-r { background: #fee2e2; color: #7f1d1d; }
+
+  /* ── STEP LIST ── */
+  .steps { counter-reset: step; list-style: none; margin: 1.5rem 0; }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 0.75rem 0 0.75rem 3.25rem;
+    border-bottom: 1px solid var(--bg3);
+    font-size: 0.9rem;
+    color: var(--ink2);
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent2);
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    width: 2rem;
+    height: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+  }
+  .steps strong { color: var(--ink); font-weight: 600; }
+
+  /* ── PRO/CON ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } .cover-meta { grid-template-columns: 1fr; } }
+  .pro-box, .con-box {
+    border: var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    background: #fff;
+  }
+  .pro-box { border-top: 3px solid #16a34a; }
+  .con-box { border-top: 3px solid #dc2626; }
+  .pro-box h4 { color: #15803d; }
+  .con-box h4 { color: #b91c1c; }
+  .pro-box h4, .con-box h4 { font-size: 0.78rem; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .check-list { list-style: none; }
+  .check-list li { font-size: 0.875rem; color: var(--ink2); padding: 0.35rem 0; padding-left: 1.4rem; position: relative; }
+  .check-list li::before { position: absolute; left: 0; }
+  .pro-box .check-list li::before { content: '✓'; color: #16a34a; font-weight: 700; }
+  .con-box .check-list li::before { content: '✗'; color: #dc2626; font-weight: 700; }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: var(--mono);
+    font-size: 0.82em;
+    background: var(--bg2);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    color: var(--ink);
+    border: 1px solid var(--bg3);
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    margin: 1.25rem 0;
+    font-size: 0.88rem;
+  }
+  .callout-info { background: #eff6ff; border-left: 3px solid #3b82f6; color: #1e3a5f; }
+  .callout-warn { background: #fefce8; border-left: 3px solid #eab308; color: #713f12; }
+  .callout-icon { flex-shrink: 0; font-size: 1.1rem; margin-top: 0.05rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--accent);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ COVER ═══ -->
+<div class="cover">
+  <div class="cover-inner">
+    <div class="cover-badge">VTU · Analysis &amp; Design of Algorithms · BCS401 · Micro Project</div>
+    <h1>License Plate<br><span>Recognition System</span></h1>
+    <p class="cover-sub">Automatic vehicle number plate detection and recognition using image processing algorithms and OCR</p>
+
+    <div style="margin-bottom:2rem;font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:0.06em;color:rgba(255,255,255,0.55);text-transform:uppercase;">
+      Sai Vidya Institute of Technology
+    </div>
+
+    <div class="cover-meta" style="grid-template-columns:repeat(4,1fr);max-width:780px;">
+      <div class="cover-meta-item">
+        <div class="label">01 · Team Member</div>
+        <div class="value">Anurag Paul</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">02 · Team Member</div>
+        <div class="value">Alisha Pandit</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">03 · Team Member</div>
+        <div class="value">Md Zeeshan</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">04 · Team Member</div>
+        <div class="value">Srishti Mishra</div>
+      </div>
+    </div>
+
+    <div class="cover-meta" style="max-width:780px;margin-top:1px;">
+      <div class="cover-meta-item">
+        <div class="label">Subject</div>
+        <div class="value">ADA — BCS401</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Technologies</div>
+        <div class="value">Python · OpenCV · Tesseract</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Category</div>
+        <div class="value">Image Processing + DSA</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-scroll">↓ scroll to explore</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ NAV ═══ -->
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#modules">Modules</a>
+  <a href="#flowchart">Flowchart</a>
+  <a href="#algorithms">Algorithms</a>
+  <a href="#code">Source Code</a>
+  <a href="#complexity">Complexity</a>
+  <a href="#database">Database</a>
+  <a href="#applications">Applications</a>
+  <a href="#analysis">Analysis</a>
+  <a href="#setup">Setup</a>
+</nav>
+
+<!-- ═════════════════════════════════════════════ 1. OVERVIEW ═══ -->
+<div class="page">
+<section id="overview">
+  <div class="section-number">Section 01</div>
+  <h2>Project Overview</h2>
+  <p>A <strong>License Plate Recognition (LPR)</strong> system is a computer-vision application that automatically detects and reads vehicle registration numbers from images. This project demonstrates how classical algorithms from the Analysis and Design of Algorithms syllabus — edge detection, contour analysis, and searching — can be combined with modern OCR to build a real-world system.</p>
+  <p>The system takes a vehicle image as input, runs it through a preprocessing and detection pipeline, extracts the plate text using Tesseract OCR, and finally searches a vehicle registry database to return owner information.</p>
+
+  <div class="cards">
+    <div class="card card-blue">
+      <div class="card-icon">🔍</div>
+      <h4>Image Processing</h4>
+      <p>Grayscale conversion, bilateral filtering, and Canny edge detection prepare the image for analysis.</p>
+    </div>
+    <div class="card card-green">
+      <div class="card-icon">⬜</div>
+      <h4>Contour Detection</h4>
+      <p>Closed rectangular contours are extracted from the edge map and filtered by aspect ratio to find the plate region.</p>
+    </div>
+    <div class="card card-amber">
+      <div class="card-icon">🔤</div>
+      <h4>OCR Extraction</h4>
+      <p>Tesseract reads alphanumeric characters from the cropped plate image and returns raw text.</p>
+    </div>
+    <div class="card card-purple">
+      <div class="card-icon">🗄️</div>
+      <h4>Database Search</h4>
+      <p>Hash-based dictionary lookup (O(1)) with linear-search fallback for fuzzy matching.</p>
+    </div>
+    <div class="card card-red">
+      <div class="card-icon">🪟</div>
+      <h4>Visual Output</h4>
+      <p>Four OpenCV windows display the original image, edges, detected plate, and cropped plate.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-icon">📊</div>
+      <h4>Complexity Analysis</h4>
+      <p>Each algorithm stage is analysed for time and space complexity for academic evaluation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════ 2. MODULES ═══ -->
+<section id="modules">
+  <div class="section-number">Section 02</div>
+  <h2>System Modules</h2>
+  <p>The system is divided into twelve clearly-commented Python modules, each responsible for one stage of the pipeline. This modular design makes the code easy to understand, test, and extend.</p>
+
+  <ol class="steps">
+    <li><strong>Imports &amp; Configuration</strong> — Loads OpenCV, NumPy, Pytesseract, and the regular-expression library. Sets the Tesseract executable path for Windows.</li>
+    <li><strong>Vehicle Database</strong> — A Python dictionary keyed by plate number, storing owner name and vehicle type. Demonstrates hash-map data structure usage.</li>
+    <li><strong>Banner &amp; Utilities</strong> — Console formatting helpers that make the terminal output structured and readable.</li>
+    <li><strong>Image Loading</strong> — Reads the image file from disk using <code>cv2.imread()</code> and validates the path and format. Time complexity O(W×H).</li>
+    <li><strong>Image Preprocessing</strong> — Three-step pipeline: grayscale conversion → bilateral filtering → Canny edge detection. Converts the coloured photograph into a clean binary edge map.</li>
+    <li><strong>Contour Detection &amp; Plate Localisation</strong> — Extracts all closed contours from the edge map, sorts by area, and applies a 4-vertex + aspect-ratio filter to isolate the number plate region.</li>
+    <li><strong>OCR Text Extraction</strong> — Upscales the cropped plate, applies Otsu thresholding, then passes it to Tesseract with a whitelist of valid characters.</li>
+    <li><strong>Text Cleaning</strong> — Uses regex to strip all non-alphanumeric characters and convert to uppercase, producing a clean plate string like <code>KA01AB1234</code>.</li>
+    <li><strong>Database Search</strong> — Attempts an exact hash-map lookup (O(1)), then falls back to character-level linear similarity search (O(n)).</li>
+    <li><strong>Result Display</strong> — Prints a structured summary of the recognised plate and owner details to the terminal.</li>
+    <li><strong>Visual Windows</strong> — Opens four <code>cv2.imshow()</code> windows showing the four processing stages side by side.</li>
+    <li><strong>Demo Mode</strong> — Runs three database lookups without needing a real image, useful for academic demonstration.</li>
+  </ol>
+</section>
+
+<!-- ═════════════════════════════════════════════ 3. FLOWCHART ═══ -->
+<section id="flowchart">
+  <div class="section-number">Section 03</div>
+  <h2>System Flowchart</h2>
+  <p>The flowchart below illustrates the complete decision flow of the LPR system, from image input to final database output.</p>
+
+  <div class="flowchart-wrap">
+    <svg width="100%" viewBox="0 0 560 1020" role="img" xmlns="http://www.w3.org/2000/svg">
+      <title>LPR System Flowchart</title>
+      <desc>Complete flowchart from image input through preprocessing, plate detection, OCR, and database search</desc>
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2e5f92" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arrg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arrr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <style>
+        .fbox { fill:#fff; stroke:#c8c4b8; stroke-width:1.5; }
+        .fbox-start { fill:#1a3a5c; stroke:#1a3a5c; }
+        .fbox-proc { fill:#eff6ff; stroke:#bfdbfe; stroke-width:1.5; }
+        .fbox-dec  { fill:#fef9c3; stroke:#fde047; stroke-width:1.5; }
+        .fbox-ok   { fill:#f0fdf4; stroke:#86efac; stroke-width:1.5; }
+        .fbox-err  { fill:#fef2f2; stroke:#fca5a5; stroke-width:1.5; }
+        .fbox-end  { fill:#1a4731; stroke:#1a4731; }
+        .ft   { font-family:'DM Sans',sans-serif; font-size:12px; fill:#1e3a5f; }
+        .fts  { font-family:'DM Sans',sans-serif; font-size:10px; fill:#64748b; }
+        .ftw  { font-family:'DM Sans',sans-serif; font-size:12px; fill:#fff; }
+        .ftb  { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; fill:#1e3a5f; }
+        .farr { stroke:#2e5f92; stroke-width:1.5; fill:none; }
+        .farrg{ stroke:#16a34a; stroke-width:1.5; fill:none; }
+        .farrr{ stroke:#dc2626; stroke-width:1.5; fill:none; }
+        .flbl { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.05em; }
+      </style>
+
+      <!-- START -->
+      <rect class="fbox-start" x="195" y="20" width="170" height="38" rx="19"/>
+      <text class="ftw" x="280" y="44" text-anchor="middle" dominant-baseline="central" font-weight="600">START</text>
+
+      <line class="farr" x1="280" y1="58" x2="280" y2="80" marker-end="url(#arr)"/>
+
+      <!-- 1. Input image path -->
+      <rect class="fbox-proc" x="160" y="80" width="240" height="42" rx="6"/>
+      <text class="ftb" x="280" y="96" text-anchor="middle" dominant-baseline="central">Input: Vehicle image path</text>
+      <text class="fts" x="280" y="112" text-anchor="middle" dominant-baseline="central">User provides file path via terminal</text>
+
+      <line class="farr" x1="280" y1="122" x2="280" y2="144" marker-end="url(#arr)"/>
+
+      <!-- 2. Load image -->
+      <rect class="fbox-proc" x="160" y="144" width="240" height="42" rx="6"/>
+      <text class="ftb" x="280" y="160" text-anchor="middle" dominant-baseline="central">Load image with OpenCV</text>
+      <text class="fts" x="280" y="176" text-anchor="middle" dominant-baseline="central">cv2.imread() — O(W×H)</text>
+
+      <line class="farr" x1="280" y1="186" x2="280" y2="208" marker-end="url(#arr)"/>
+
+      <!-- Decision: valid? -->
+      <polygon class="fbox-dec" points="280,208 420,236 280,264 140,236"/>
+      <text class="ftb" x="280" y="230" text-anchor="middle" dominant-baseline="central">Image valid?</text>
+      <text class="fts" x="280" y="246" text-anchor="middle" dominant-baseline="central">File exists &amp; readable</text>
+
+      <!-- No branch -->
+      <line class="farrr" x1="140" y1="236" x2="60" y2="236" marker-end="url(#arrr)"/>
+      <text class="flbl" x="96" y="228" text-anchor="middle" fill="#dc2626">NO</text>
+      <rect class="fbox-err" x="20" y="252" width="80" height="34" rx="5"/>
+      <text class="ft" x="60" y="270" text-anchor="middle" dominant-baseline="central" fill="#b91c1c">Show Error</text>
+      <line class="farrr" x1="60" y1="286" x2="60" y2="310" marker-end="url(#arrr)"/>
+      <rect x="20" y="310" width="80" height="34" rx="19" fill="#b91c1c" stroke="#b91c1c"/>
+      <text class="ftw" x="60" y="327" text-anchor="middle" dominant-baseline="central" font-size="11px">EXIT</text>
+
+      <!-- Yes branch -->
+      <line class="farrg" x1="280" y1="264" x2="280" y2="286" marker-end="url(#arrg)"/>
+      <text class="flbl" x="292" y="278" fill="#16a34a">YES</text>
+
+      <!-- 3. Preprocess -->
+      <rect class="fbox-proc" x="150" y="286" width="260" height="54" rx="6"/>
+      <text class="ftb" x="280" y="306" text-anchor="middle" dominant-baseline="central">Preprocessing Pipeline</text>
+      <text class="fts" x="280" y="320" text-anchor="middle" dominant-baseline="central">Grayscale → Bilateral Filter → Canny Edges</text>
+      <text class="fts" x="280" y="334" text-anchor="middle" dominant-baseline="central">Time: O(W × H)</text>
+
+      <line class="farr" x1="280" y1="340" x2="280" y2="362" marker-end="url(#arr)"/>
+
+      <!-- 4. Contour Detection -->
+      <rect class="fbox-proc" x="150" y="362" width="260" height="54" rx="6"/>
+      <text class="ftb" x="280" y="382" text-anchor="middle" dominant-baseline="central">Contour Detection</text>
+      <text class="fts" x="280" y="396" text-anchor="middle" dominant-baseline="central">Find rectangular contours</text>
+      <text class="fts" x="280" y="410" text-anchor="middle" dominant-baseline="central">Filter: 4 vertices + aspect ratio 1.5–6.0</text>
+
+      <line class="farr" x1="280" y1="416" x2="280" y2="438" marker-end="url(#arr)"/>
+
+      <!-- Decision: plate found? -->
+      <polygon class="fbox-dec" points="280,438 420,466 280,494 140,466"/>
+      <text class="ftb" x="280" y="460" text-anchor="middle" dominant-baseline="central">Plate detected?</text>
+      <text class="fts" x="280" y="476" text-anchor="middle" dominant-baseline="central">Rectangle found in edge map</text>
+
+      <!-- No branch right -->
+      <line class="farrr" x1="420" y1="466" x2="500" y2="466" marker-end="url(#arrr)"/>
+      <text class="flbl" x="458" y="458" text-anchor="middle" fill="#dc2626">NO</text>
+      <rect class="fbox-err" x="460" y="482" width="90" height="34" rx="5"/>
+      <text class="ft" x="505" y="498" text-anchor="middle" dominant-baseline="central" fill="#b91c1c" font-size="10px">Skip OCR Stage</text>
+
+      <!-- Yes -->
+      <line class="farrg" x1="280" y1="494" x2="280" y2="516" marker-end="url(#arrg)"/>
+      <text class="flbl" x="292" y="508" fill="#16a34a">YES</text>
+
+      <!-- 5. OCR -->
+      <rect class="fbox-proc" x="150" y="516" width="260" height="54" rx="6"/>
+      <text class="ftb" x="280" y="536" text-anchor="middle" dominant-baseline="central">OCR — Tesseract</text>
+      <text class="fts" x="280" y="550" text-anchor="middle" dominant-baseline="central">Upscale → Threshold → Extract text</text>
+      <text class="fts" x="280" y="564" text-anchor="middle" dominant-baseline="central">Whitelist: A–Z and 0–9</text>
+
+      <line class="farr" x1="280" y1="570" x2="280" y2="592" marker-end="url(#arr)"/>
+
+      <!-- 6. Clean text -->
+      <rect class="fbox-proc" x="150" y="592" width="260" height="42" rx="6"/>
+      <text class="ftb" x="280" y="608" text-anchor="middle" dominant-baseline="central">Clean &amp; Format Text</text>
+      <text class="fts" x="280" y="624" text-anchor="middle" dominant-baseline="central">Regex strip → Uppercase → "KA01AB1234"</text>
+
+      <line class="farr" x1="280" y1="634" x2="280" y2="656" marker-end="url(#arr)"/>
+
+      <!-- 7. DB search -->
+      <rect class="fbox-proc" x="150" y="656" width="260" height="42" rx="6"/>
+      <text class="ftb" x="280" y="672" text-anchor="middle" dominant-baseline="central">Search Vehicle Database</text>
+      <text class="fts" x="280" y="688" text-anchor="middle" dominant-baseline="central">Hash lookup O(1) → Fallback O(n)</text>
+
+      <line class="farr" x1="280" y1="698" x2="280" y2="720" marker-end="url(#arr)"/>
+
+      <!-- Decision: found? -->
+      <polygon class="fbox-dec" points="280,720 420,748 280,776 140,748"/>
+      <text class="ftb" x="280" y="742" text-anchor="middle" dominant-baseline="central">Vehicle found?</text>
+      <text class="fts" x="280" y="758" text-anchor="middle" dominant-baseline="central">Key exists in dictionary</text>
+
+      <!-- Found YES -->
+      <line class="farrg" x1="140" y1="748" x2="60" y2="748" marker-end="url(#arrg)"/>
+      <text class="flbl" x="96" y="740" text-anchor="middle" fill="#16a34a">YES</text>
+      <rect class="fbox-ok" x="10" y="764" width="100" height="50" rx="5"/>
+      <text class="ft" x="60" y="781" text-anchor="middle" dominant-baseline="central" fill="#15803d" font-weight="600">Display</text>
+      <text class="fts" x="60" y="797" text-anchor="middle" dominant-baseline="central" fill="#166534">Owner &amp; Type</text>
+      <text class="fts" x="60" y="811" text-anchor="middle" dominant-baseline="central" fill="#166534">✅ Found</text>
+
+      <!-- Not found NO -->
+      <line class="farrr" x1="420" y1="748" x2="500" y2="748" marker-end="url(#arrr)"/>
+      <text class="flbl" x="458" y="740" text-anchor="middle" fill="#dc2626">NO</text>
+      <rect class="fbox-err" x="450" y="764" width="100" height="50" rx="5"/>
+      <text class="ft" x="500" y="781" text-anchor="middle" dominant-baseline="central" fill="#b91c1c" font-weight="600">Display</text>
+      <text class="fts" x="500" y="797" text-anchor="middle" dominant-baseline="central" fill="#b91c1c">Not Found</text>
+      <text class="fts" x="500" y="811" text-anchor="middle" dominant-baseline="central" fill="#b91c1c">❌ Missing</text>
+
+      <!-- Both converge -->
+      <line class="farrg" x1="60"  y1="814" x2="60"  y2="860" stroke="#16a34a" stroke-width="1.5" fill="none"/>
+      <line class="farrr" x1="500" y1="814" x2="500" y2="860" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+      <line class="farr"  x1="60"  y1="860" x2="280" y2="860" marker-end="url(#arr)" stroke="#2e5f92"/>
+      <line class="farr"  x1="500" y1="860" x2="280" y2="860" stroke="#2e5f92" fill="none"/>
+
+      <!-- 8. Show windows -->
+      <rect class="fbox-proc" x="150" y="860" width="260" height="42" rx="6"/>
+      <text class="ftb" x="280" y="876" text-anchor="middle" dominant-baseline="central">Show OpenCV Windows</text>
+      <text class="fts" x="280" y="892" text-anchor="middle" dominant-baseline="central">Original · Edges · Detected · Cropped</text>
+
+      <line class="farr" x1="280" y1="902" x2="280" y2="924" marker-end="url(#arr)"/>
+
+      <!-- END -->
+      <rect class="fbox-end" x="195" y="924" width="170" height="38" rx="19"/>
+      <text class="ftw" x="280" y="943" text-anchor="middle" dominant-baseline="central" font-weight="600">END</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ 4. ALGORITHMS ═══ -->
+<section id="algorithms">
+  <div class="section-number">Section 04</div>
+  <h2>Algorithms Used</h2>
+  <p>Each stage of the pipeline employs a specific algorithm from computer science. Below is a detailed explanation of each.</p>
+
+  <h3>1. Canny Edge Detection Algorithm</h3>
+  <p>Proposed by John F. Canny in 1986, this is the most widely used edge-detection algorithm due to its ability to produce thin, well-connected edges while suppressing noise.</p>
+  <div class="algo-box">
+    <h4>Algorithm Steps</h4>
+    <p>
+      <strong>Step 1 — Gaussian Smoothing:</strong> Convolve the grayscale image with a Gaussian kernel to suppress high-frequency noise.<br>
+      <strong>Step 2 — Gradient Computation:</strong> Apply Sobel filters in X and Y directions to compute gradient magnitude and direction at each pixel.<br>
+      <strong>Step 3 — Non-Maximum Suppression:</strong> Thin the edges by keeping only the local maxima of the gradient magnitude along the gradient direction.<br>
+      <strong>Step 4 — Double Thresholding:</strong> Classify pixels as strong edges (above high threshold), weak edges (between thresholds), or non-edges (below low threshold).<br>
+      <strong>Step 5 — Edge Tracking by Hysteresis:</strong> Retain weak edges only if they are connected (8-connectivity) to at least one strong edge pixel.
+    </p>
+    <span class="complexity">Time Complexity: O(W × H)</span>
+    <span class="complexity">Space Complexity: O(W × H)</span>
+  </div>
+
+  <h3>2. Contour Detection Algorithm</h3>
+  <p>OpenCV's <code>findContours()</code> implements the Suzuki-Abe algorithm (1985), which traces the boundaries of binary regions in a raster image. After extraction, contours are sorted by area and each is approximated using the Ramer–Douglas–Peucker algorithm via <code>approxPolyDP()</code>.</p>
+  <div class="algo-box">
+    <h4>Plate Filtering Heuristics</h4>
+    <p>
+      A contour is accepted as a candidate plate if its polygon approximation has <strong>exactly 4 vertices</strong> (quadrilateral), its bounding rectangle has an <strong>aspect ratio between 1.5 and 6.0</strong> (typical for number plates), its width exceeds <strong>80 px</strong>, and its height exceeds <strong>20 px</strong>.
+    </p>
+    <span class="complexity">Contour Extraction: O(W × H)</span>
+    <span class="complexity">Sorting: O(n log n)</span>
+    <span class="complexity">Polygon Approximation: O(n) per contour</span>
+  </div>
+
+  <h3>3. Bilateral Filtering</h3>
+  <p>A non-linear, edge-preserving smoothing filter. Unlike Gaussian blur which blurs edges, bilateral filtering weights each pixel by both spatial proximity <em>and</em> radiometric similarity, preserving sharp boundaries while removing noise in flat regions.</p>
+  <div class="algo-box">
+    <h4>Parameters Used</h4>
+    <p><code>d=11</code> (neighbourhood diameter), <code>sigmaColor=17</code>, <code>sigmaSpace=17</code>. Higher sigma values produce stronger smoothing.</p>
+    <span class="complexity">Time Complexity: O(W × H × d²)</span>
+  </div>
+
+  <h3>4. OCR — Optical Character Recognition</h3>
+  <p>Tesseract OCR v4+ uses an <strong>LSTM (Long Short-Term Memory)</strong> neural network trained on multi-language character images. The input image is binarised using Otsu's threshold before OCR, which maximises inter-class variance between dark text and bright background.</p>
+  <div class="algo-box">
+    <h4>Configuration Used</h4>
+    <p><code>--psm 8</code> (single word mode), <code>--oem 3</code> (LSTM engine), character whitelist restricted to <code>A–Z</code> and <code>0–9</code> to prevent false characters.</p>
+    <span class="complexity">Time Complexity: O(n) — linear in number of characters</span>
+  </div>
+
+  <h3>5. Database Search — Hash Map Lookup</h3>
+  <p>Python's built-in <code>dict</code> is a hash table. Lookup is performed by hashing the key string, computing a table index, and directly accessing the bucket — no traversal needed in the average case. A fallback linear-similarity search counts matching characters at each position and accepts candidates with ≥ 80% similarity.</p>
+  <div class="algo-box">
+    <h4>Search Strategy</h4>
+    <p><strong>Primary:</strong> Exact hash-map lookup — <code>plate_number in VEHICLE_DATABASE</code>.<br>
+       <strong>Fallback:</strong> Linear scan with character-level similarity score for partial OCR matches.</p>
+    <span class="complexity">Exact Lookup: O(1) average, O(n) worst case</span>
+    <span class="complexity">Similarity Search: O(n × k) — n entries, k characters each</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ 5. CODE ═══ -->
+<section id="code">
+  <div class="section-number">Section 05</div>
+  <h2>Annotated Source Code</h2>
+  <p>The complete implementation is available in <code>license_plate_recognition.py</code>. Key excerpts are shown below with explanations.</p>
+
+  <h3>Preprocessing Pipeline</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">python — preprocess_image()</div>
+    </div>
+    <pre><span class="c-kw">def</span> <span class="c-fn">preprocess_image</span>(image):
+    <span class="c-cmt"># Step 1: Convert BGR to Grayscale</span>
+    <span class="c-cmt"># Formula: Gray = 0.114·B + 0.587·G + 0.299·R</span>
+    gray = cv2.<span class="c-fn">cvtColor</span>(image, cv2.COLOR_BGR2GRAY)
+
+    <span class="c-cmt"># Step 2: Bilateral Filter — removes noise, keeps edges</span>
+    <span class="c-cmt"># d=11 neighbourhood; sigmaColor=17; sigmaSpace=17</span>
+    filtered = cv2.<span class="c-fn">bilateralFilter</span>(gray, d=<span class="c-num">11</span>,
+                  sigmaColor=<span class="c-num">17</span>, sigmaSpace=<span class="c-num">17</span>)
+
+    <span class="c-cmt"># Step 3: Canny Edge Detection</span>
+    <span class="c-cmt"># Pixels &gt; 200  → strong edges (kept)</span>
+    <span class="c-cmt"># Pixels 30–200 → weak edges (kept if near strong)</span>
+    <span class="c-cmt"># Pixels &lt; 30   → discarded</span>
+    edges = cv2.<span class="c-fn">Canny</span>(filtered,
+                threshold1=<span class="c-num">30</span>, threshold2=<span class="c-num">200</span>)
+
+    <span class="c-kw">return</span> gray, filtered, edges</pre>
+  </div>
+
+  <h3>Contour-Based Plate Detection</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">python — detect_number_plate()</div>
+    </div>
+    <pre><span class="c-cmt"># Find all contours in the binary edge map</span>
+contours, _ = cv2.<span class="c-fn">findContours</span>(
+    edges.<span class="c-fn">copy</span>(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+)
+
+<span class="c-cmt"># Sort by area, largest first; analyse top 30</span>
+contours = <span class="c-fn">sorted</span>(contours,
+    key=cv2.contourArea, reverse=<span class="c-cls">True</span>)[:<span class="c-num">30</span>]
+
+<span class="c-kw">for</span> contour <span class="c-kw">in</span> contours:
+    perimeter = cv2.<span class="c-fn">arcLength</span>(contour, <span class="c-cls">True</span>)
+    approx    = cv2.<span class="c-fn">approxPolyDP</span>(contour,
+                    <span class="c-num">0.018</span> * perimeter, <span class="c-cls">True</span>)
+
+    <span class="c-kw">if</span> <span class="c-fn">len</span>(approx) == <span class="c-num">4</span>:          <span class="c-cmt"># Must be a quadrilateral</span>
+        x, y, w, h = cv2.<span class="c-fn">boundingRect</span>(approx)
+        aspect_ratio = w / <span class="c-fn">float</span>(h)
+
+        <span class="c-kw">if</span> <span class="c-num">1.5</span> &lt;= aspect_ratio &lt;= <span class="c-num">6.0</span>:  <span class="c-cmt"># Plate shape check</span>
+            plate_image = image[y:y+h, x:x+w]  <span class="c-cmt"># Crop the plate</span>
+            <span class="c-kw">break</span></pre>
+  </div>
+
+  <h3>OCR with Tesseract</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">python — extract_text_ocr()</div>
+    </div>
+    <pre><span class="c-cmt"># Upscale 2× for better OCR resolution</span>
+plate_large  = cv2.<span class="c-fn">resize</span>(plate_image, <span class="c-cls">None</span>,
+               fx=<span class="c-num">2</span>, fy=<span class="c-num">2</span>, interpolation=cv2.INTER_CUBIC)
+
+<span class="c-cmt"># Convert to grayscale, then Otsu threshold</span>
+plate_gray   = cv2.<span class="c-fn">cvtColor</span>(plate_large, cv2.COLOR_BGR2GRAY)
+_, plate_thresh = cv2.<span class="c-fn">threshold</span>(
+    plate_gray, <span class="c-num">0</span>, <span class="c-num">255</span>, cv2.THRESH_BINARY + cv2.THRESH_OTSU
+)
+
+<span class="c-cmt"># Tesseract: single word mode, LSTM engine, char whitelist</span>
+config = <span class="c-str">'--psm 8 --oem 3 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'</span>
+raw_text = pytesseract.<span class="c-fn">image_to_string</span>(plate_thresh, config=config)
+
+<span class="c-cmt"># Clean: strip non-alphanumeric characters, uppercase</span>
+<span class="c-kw">import</span> re
+cleaned_text = re.<span class="c-fn">sub</span>(<span class="c-str">r'[^A-Z0-9]'</span>, <span class="c-str">''</span>, raw_text.<span class="c-fn">upper</span>())</pre>
+  </div>
+
+  <h3>Database Search (Hash Map + Linear Fallback)</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">python — search_vehicle_database()</div>
+    </div>
+    <pre><span class="c-cmt"># Strategy 1: Exact hash-map lookup — O(1) average</span>
+<span class="c-kw">if</span> plate_number <span class="c-kw">in</span> VEHICLE_DATABASE:
+    <span class="c-kw">return</span> VEHICLE_DATABASE[plate_number], plate_number
+
+<span class="c-cmt"># Strategy 2: Partial / Fuzzy Linear Search — O(n)</span>
+<span class="c-cmt"># Useful when OCR introduces 1–2 character errors</span>
+best_score = <span class="c-num">0</span>
+<span class="c-kw">for</span> key <span class="c-kw">in</span> VEHICLE_DATABASE:
+    score = <span class="c-fn">sum</span>(<span class="c-num">1</span> <span class="c-kw">for</span> a, b <span class="c-kw">in</span> <span class="c-fn">zip</span>(plate_number, key)
+               <span class="c-kw">if</span> a == b)
+    match_ratio = score / <span class="c-fn">max</span>(<span class="c-fn">len</span>(key), <span class="c-num">1</span>)
+
+    <span class="c-kw">if</span> match_ratio >= <span class="c-num">0.8</span> <span class="c-kw">and</span> score > best_score:
+        best_score = score
+        best_match = VEHICLE_DATABASE[key]
+        best_key   = key</pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ 6. COMPLEXITY ═══ -->
+<section id="complexity">
+  <div class="section-number">Section 06</div>
+  <h2>Time &amp; Space Complexity Analysis</h2>
+  <p>The table below summarises the algorithmic complexity of each stage in the LPR pipeline. <em>W</em> = image width in pixels, <em>H</em> = image height, <em>d</em> = bilateral filter diameter, <em>n</em> = number of contours / database entries.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Stage</th>
+        <th>Algorithm</th>
+        <th>Time Complexity</th>
+        <th>Space Complexity</th>
+        <th>Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Image Loading</td>
+        <td>File I/O (disk read)</td>
+        <td><code>O(W × H)</code></td>
+        <td><code>O(W × H)</code></td>
+        <td><span class="tag tag-g">Fast</span></td>
+      </tr>
+      <tr>
+        <td>Grayscale Conversion</td>
+        <td>Weighted channel sum</td>
+        <td><code>O(W × H)</code></td>
+        <td><code>O(W × H)</code></td>
+        <td><span class="tag tag-g">Fast</span></td>
+      </tr>
+      <tr>
+        <td>Bilateral Filtering</td>
+        <td>Weighted kernel convolution</td>
+        <td><code>O(W × H × d²)</code></td>
+        <td><code>O(W × H)</code></td>
+        <td><span class="tag tag-y">Moderate</span></td>
+      </tr>
+      <tr>
+        <td>Canny Edge Detection</td>
+        <td>Gradient + Hysteresis</td>
+        <td><code>O(W × H)</code></td>
+        <td><code>O(W × H)</code></td>
+        <td><span class="tag tag-g">Fast</span></td>
+      </tr>
+      <tr>
+        <td>Contour Extraction</td>
+        <td>Suzuki-Abe boundary tracing</td>
+        <td><code>O(W × H)</code></td>
+        <td><code>O(n)</code></td>
+        <td><span class="tag tag-g">Fast</span></td>
+      </tr>
+      <tr>
+        <td>Contour Sorting</td>
+        <td>Timsort (Python built-in)</td>
+        <td><code>O(n log n)</code></td>
+        <td><code>O(n)</code></td>
+        <td><span class="tag tag-g">Fast</span></td>
+      </tr>
+      <tr>
+        <td>Polygon Approximation</td>
+        <td>Ramer–Douglas–Peucker</td>
+        <td><code>O(n)</code> per contour</td>
+        <td><code>O(n)</code></td>
+        <td><span class="tag tag-g">Fast</span></td>
+      </tr>
+      <tr>
+        <td>OCR (Tesseract)</td>
+        <td>LSTM neural network</td>
+        <td><code>O(n)</code> chars</td>
+        <td><code>O(model)</code></td>
+        <td><span class="tag tag-y">Moderate</span></td>
+      </tr>
+      <tr>
+        <td>DB Exact Lookup</td>
+        <td>Hash map (dict)</td>
+        <td><code>O(1)</code> average</td>
+        <td><code>O(1)</code></td>
+        <td><span class="tag tag-g">Optimal</span></td>
+      </tr>
+      <tr>
+        <td>DB Fuzzy Search</td>
+        <td>Linear scan + similarity</td>
+        <td><code>O(n × k)</code></td>
+        <td><code>O(1)</code></td>
+        <td><span class="tag tag-b">Linear</span></td>
+      </tr>
+      <tr>
+        <td><strong>Total Pipeline</strong></td>
+        <td>All stages combined</td>
+        <td><strong><code>O(W × H × d²)</code></strong></td>
+        <td><strong><code>O(W × H)</code></strong></td>
+        <td><span class="tag tag-y">Acceptable</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">ℹ️</span>
+    <span>The bilateral filter dominates the total complexity. For a 1920×1080 image with d=11, this means ~1920 × 1080 × 121 ≈ 251 million operations. In practice, OpenCV's optimised C++ implementation runs this in under 100ms on modern hardware.</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ 7. DATABASE ═══ -->
+<section id="database">
+  <div class="section-number">Section 07</div>
+  <h2>Vehicle Database Design</h2>
+  <p>The database is implemented as a Python dictionary — a hash map data structure. The key is the normalised plate number (uppercase, no spaces), and the value is a nested dictionary with owner and type fields.</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">python — VEHICLE_DATABASE (hash map)</div>
+    </div>
+    <pre>VEHICLE_DATABASE = {
+    <span class="c-str">"KA01AB1234"</span>: {<span class="c-str">"owner"</span>: <span class="c-str">"Rajesh Kumar"</span>,  <span class="c-str">"type"</span>: <span class="c-str">"Car (Sedan)"</span>},
+    <span class="c-str">"KA02CD5678"</span>: {<span class="c-str">"owner"</span>: <span class="c-str">"Priya Sharma"</span>,  <span class="c-str">"type"</span>: <span class="c-str">"Motorcycle"</span>},
+    <span class="c-str">"MH12EF9012"</span>: {<span class="c-str">"owner"</span>: <span class="c-str">"Amit Patil"</span>,    <span class="c-str">"type"</span>: <span class="c-str">"Car (SUV)"</span>},
+    <span class="c-str">"DL8CAS3456"</span>: {<span class="c-str">"owner"</span>: <span class="c-str">"Sneha Verma"</span>,   <span class="c-str">"type"</span>: <span class="c-str">"Car (Hatchback)"</span>},
+    <span class="c-str">"TN09GH7890"</span>: {<span class="c-str">"owner"</span>: <span class="c-str">"Suresh Rajan"</span>,  <span class="c-str">"type"</span>: <span class="c-str">"Truck"</span>},
+    <span class="c-cmt"># ... 5 more entries</span>
+}</pre>
+  </div>
+
+  <h3>Why a Dictionary (Hash Map)?</h3>
+  <p>A hash map was chosen because vehicle lookups are identity-based (exact key) and must be fast. With a hash map, retrieval time is constant (O(1)) regardless of database size, making it far superior to a list (O(n)) for this use case. This directly demonstrates the ADA concept of selecting the right data structure for the right problem.</p>
+
+  <table>
+    <thead>
+      <tr><th>Data Structure</th><th>Lookup</th><th>Insert</th><th>Delete</th><th>Best For This Project?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Python <code>dict</code> (Hash Map)</td><td><code>O(1)</code></td><td><code>O(1)</code></td><td><code>O(1)</code></td><td><span class="tag tag-g">✓ Yes</span></td></tr>
+      <tr><td>List (Linear Scan)</td><td><code>O(n)</code></td><td><code>O(1)</code></td><td><code>O(n)</code></td><td><span class="tag tag-r">✗ Too slow</span></td></tr>
+      <tr><td>Binary Search Tree</td><td><code>O(log n)</code></td><td><code>O(log n)</code></td><td><code>O(log n)</code></td><td><span class="tag tag-y">Acceptable</span></td></tr>
+      <tr><td>Sorted List + Binary Search</td><td><code>O(log n)</code></td><td><code>O(n)</code></td><td><code>O(n)</code></td><td><span class="tag tag-y">Acceptable</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════ 8. APPLICATIONS ═══ -->
+<section id="applications">
+  <div class="section-number">Section 08</div>
+  <h2>Real-World Applications</h2>
+
+  <div class="cards">
+    <div class="card card-blue">
+      <div class="card-icon">🚗</div>
+      <h4>Toll Collection</h4>
+      <p>Automated toll booths recognise plates without human operators, enabling FASTag-style contactless collection.</p>
+    </div>
+    <div class="card card-red">
+      <div class="card-icon">🚔</div>
+      <h4>Traffic Enforcement</h4>
+      <p>Speed cameras and red-light cameras capture plates to automatically issue challans to violating vehicles.</p>
+    </div>
+    <div class="card card-green">
+      <div class="card-icon">🅿️</div>
+      <h4>Parking Management</h4>
+      <p>Smart parking systems auto-record entry/exit times and compute bills based on plate recognition.</p>
+    </div>
+    <div class="card card-amber">
+      <div class="card-icon">🏢</div>
+      <h4>Access Control</h4>
+      <p>Residential complexes and corporate campuses restrict entry to pre-registered vehicles only.</p>
+    </div>
+    <div class="card card-purple">
+      <div class="card-icon">🚔</div>
+      <h4>Stolen Vehicle Tracking</h4>
+      <p>Police systems compare detected plates against a stolen vehicle registry in real time.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-icon">🛂</div>
+      <h4>Border Control</h4>
+      <p>International crossings use LPR to log every vehicle passage for immigration and customs records.</p>
+    </div>
+    <div class="card card-blue">
+      <div class="card-icon">📦</div>
+      <h4>Logistics &amp; Delivery</h4>
+      <p>Warehouse dock management tracks incoming trucks, automatically routing them to the correct bay.</p>
+    </div>
+    <div class="card card-red">
+      <div class="card-icon">🔬</div>
+      <h4>Traffic Research</h4>
+      <p>Urban planners use anonymised LPR data to study origin-destination patterns and road usage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ 9. ANALYSIS ═══ -->
+<section id="analysis">
+  <div class="section-number">Section 09</div>
+  <h2>Advantages &amp; Limitations</h2>
+
+  <div class="two-col">
+    <div class="pro-box">
+      <h4>✓ Advantages</h4>
+      <ul class="check-list">
+        <li>Fully automated — no human intervention required</li>
+        <li>Processes images in under a second on modern hardware</li>
+        <li>Works with standard Python + open-source libraries</li>
+        <li>Modular design — easy to extend with a real database</li>
+        <li>Demonstrates 5+ ADA concepts in a single project</li>
+        <li>Demo mode allows presentation without a real image</li>
+        <li>Hash-map search scales to millions of records at O(1)</li>
+        <li>Fuzzy search tolerates 1–2 OCR character errors</li>
+      </ul>
+    </div>
+    <div class="con-box">
+      <h4>✗ Limitations</h4>
+      <ul class="check-list">
+        <li>Accuracy depends on image quality and lighting</li>
+        <li>Tilted or partially occluded plates may be missed</li>
+        <li>Tesseract sometimes confuses '0'/'O' and '1'/'I'</li>
+        <li>Only rectangular plate shapes are detected</li>
+        <li>Database is in-memory — lost on program exit</li>
+        <li>Not suitable for real-time video without optimisation</li>
+        <li>Non-standard plate fonts reduce OCR accuracy</li>
+        <li>Multiple plates in one image may confuse detection</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">⚠️</span>
+    <span><strong>Academic Note:</strong> This project is designed for demonstration and learning. Production LPR systems use deep-learning detectors (YOLO, SSD) and are trained on thousands of labelled plate images to achieve &gt;95% accuracy across varying conditions.</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ 10. SETUP ═══ -->
+<section id="setup">
+  <div class="section-number">Section 10</div>
+  <h2>Installation &amp; Setup</h2>
+  <p>Follow these steps to run the project on your machine.</p>
+
+  <h3>Prerequisites</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">bash — Install Python packages</div>
+    </div>
+    <pre><span class="c-cmt"># Install required Python libraries</span>
+pip install opencv-python pytesseract numpy
+
+<span class="c-cmt"># Verify installation</span>
+python -c <span class="c-str">"import cv2, pytesseract, numpy; print('All OK')"</span></pre>
+  </div>
+
+  <h3>Install Tesseract OCR Engine</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">bash — Platform-specific install</div>
+    </div>
+    <pre><span class="c-cmt"># Ubuntu / Debian</span>
+sudo apt install tesseract-ocr
+
+<span class="c-cmt"># macOS (Homebrew)</span>
+brew install tesseract
+
+<span class="c-cmt"># Windows</span>
+<span class="c-cmt"># Download installer from: https://github.com/UB-Mannheim/tesseract/wiki</span>
+<span class="c-cmt"># Then uncomment and update this line in the script:</span>
+pytesseract.pytesseract.tesseract_cmd = <span class="c-str">r'C:\Program Files\Tesseract-OCR\tesseract.exe'</span></pre>
+  </div>
+
+  <h3>Run the Project</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">bash — Running the LPR system</div>
+    </div>
+    <pre><span class="c-cmt"># With an image file</span>
+python license_plate_recognition.py path/to/vehicle.jpg
+
+<span class="c-cmt"># Interactive mode (prompts for path)</span>
+python license_plate_recognition.py
+
+<span class="c-cmt"># Demo mode (press Enter without typing a path)</span>
+python license_plate_recognition.py
+  Image path: [press Enter]</pre>
+  </div>
+
+  <h3>Expected Output</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+      <div class="code-lang">terminal — Sample console output</div>
+    </div>
+    <pre><span class="c-cmt">═══════════════════════════════════════════════════════════════════</span>
+<span class="c-cls">   LICENSE PLATE RECOGNITION SYSTEM</span>
+<span class="c-cls">   VTU — Analysis and Design of Algorithms (ADA) Micro Project</span>
+<span class="c-cmt">═══════════════════════════════════════════════════════════════════</span>
+
+── STAGE 1 — Loading Image ─────────────────────────────────────────
+  [OK] Image loaded  →  Size: 1280×720 px
+
+── STAGE 2 — Image Preprocessing ──────────────────────────────────
+  [OK] Grayscale conversion complete.
+  [OK] Bilateral filtering complete.
+  [OK] Canny edge detection complete.
+
+── STAGE 3 — Number Plate Detection (Contour Analysis) ─────────────
+  [INFO] Analysing top 30 contours for plate shape...
+  [OK] Plate region found  →  240×62 px at (412,398)
+
+── STAGE 4 — OCR Text Extraction ──────────────────────────────────
+  [OCR] Raw output → 'KA01AB1234'
+  [OCR] Cleaned    → 'KA01AB1234'
+
+── STAGE 5 — Database Search ──────────────────────────────────────
+  [DB] Exact match found: 'KA01AB1234'
+
+── RECOGNITION RESULT ─────────────────────────────────────────────
+  Plate Recognised  :  KA01AB1234
+
+  ┌─────────────────────────────────────┐
+  │        ✅  VEHICLE FOUND             │
+  ├─────────────────────────────────────┤
+  │  Owner       : Rajesh Kumar         │
+  │  Vehicle Type: Car (Sedan)          │
+  │  Plate No.   : KA01AB1234           │
+  └─────────────────────────────────────┘</pre>
+  </div>
+</section>
+
+</div><!-- /page -->
+
+<!-- ═══════════════════════════════════════════════════ FOOTER ═══ -->
+<footer>
+  <p>Sai Vidya Institute of Technology · VTU · ADA — BCS401 · Micro Project</p>
+  <p style="margin-top:0.4rem;opacity:0.7">Anurag Paul &nbsp;·&nbsp; Alisha Pandit &nbsp;·&nbsp; Md Zeeshan &nbsp;·&nbsp; Srishti Mishra</p>
+  <p style="margin-top:0.4rem;opacity:0.4">License Plate Recognition System · Python · OpenCV · Tesseract OCR</p>
+</footer>
+
+</body>
+</html>
